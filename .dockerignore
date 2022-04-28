@@ -1,4 +1,7 @@
 .git
 .env
 .gitignore
-node_modules
+/node_modules
+/db
+/dist
+/build
