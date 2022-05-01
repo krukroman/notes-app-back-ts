@@ -1,62 +1,60 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.archiveValidationJoi = exports.noteValidationJoi = exports.Note = void 0;
-const mongoose_1 = require("mongoose");
-const Joi = __importStar(require("joi"));
-const noteSchema = new mongoose_1.Schema({
+exports.archivedValidationJoi = exports.noteValidationJoi = exports.sequelize = void 0;
+const sequelize_1 = require("sequelize");
+const joi_1 = __importDefault(require("joi"));
+require('dotenv').config();
+const { POSTGRES_USER, POSTGRES_PASSWORD } = process.env;
+if (!POSTGRES_USER)
+    throw new Error('Postgres user name does not exist');
+exports.sequelize = new sequelize_1.Sequelize('notes_db', POSTGRES_USER, POSTGRES_PASSWORD, {
+    dialect: 'postgres',
+    host: 'localhost'
+});
+class Note extends sequelize_1.Model {
+}
+Note.init({
+    id: {
+        type: sequelize_1.DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: sequelize_1.DataTypes.UUIDV4
+    },
     name: {
-        type: String,
-        required: [true, `Set name for note`]
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false
     },
     category: {
-        type: String,
-        required: [true, `Set category for note`]
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false
     },
     content: {
-        type: String,
-        required: [true, `Set comment for note`]
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false
     },
     dates: {
-        type: String,
-        default: ''
+        type: sequelize_1.DataTypes.STRING,
+        defaultValue: ''
     },
     archived: {
-        type: Boolean,
-        default: false
+        type: sequelize_1.DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    createdAt: {
+        type: sequelize_1.DataTypes.DATE
+    },
+    updatedAt: {
+        type: sequelize_1.DataTypes.DATE
     }
-}, {
-    versionKey: false,
-    timestamps: true
+}, { sequelize: exports.sequelize, tableName: 'notes' });
+exports.noteValidationJoi = joi_1.default.object({
+    name: joi_1.default.string().required().min(1),
+    category: joi_1.default.string().required(),
+    content: joi_1.default.string().required().min(1)
 });
-exports.Note = (0, mongoose_1.model)('note', noteSchema);
-exports.noteValidationJoi = Joi.object({
-    name: Joi.string().required().min(1),
-    category: Joi.string().required(),
-    content: Joi.string().required().min(1)
+exports.archivedValidationJoi = joi_1.default.object({
+    archived: joi_1.default.boolean().required()
 });
-exports.archiveValidationJoi = Joi.object({
-    archived: Joi.boolean().required()
-});
+exports.default = Note;

@@ -7,4 +7,4 @@ const parseDateFromText = (string: string) => {
   return matches ? matches.join(', ').replace(/-/g, '/') : '';
 };
 
-module.exports = parseDateFromText;
+export default parseDateFromText;

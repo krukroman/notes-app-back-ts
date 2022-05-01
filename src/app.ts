@@ -1,9 +1,8 @@
-import { Request, Response } from 'express';
-const express = require('express');
-const cors = require('cors');
-const logger = require('morgan');
-const errorHandler = require('./helpers/errorHandler');
-const notesRouter = require('./routes/api/notes');
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import logger from 'morgan';
+import errorHandler from './helpers/errorHandler';
+import notesRouter from './routes/api/notes';
 require('dotenv').config();
 
 const app = express();
@@ -22,4 +21,4 @@ app.use((req: Request, res: Response) => {
 
 app.use(errorHandler);
 
-module.exports = app;
+export default app;
