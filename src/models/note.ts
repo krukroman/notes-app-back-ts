@@ -1,5 +1,4 @@
 import {
-  Sequelize,
   Model,
   InferAttributes,
   InferCreationAttributes,
@@ -7,23 +6,9 @@ import {
   DataTypes
 } from 'sequelize';
 
+import sequelize from '../db';
+
 import Joi from 'joi';
-require('dotenv').config();
-
-const { POSTGRES_USER, POSTGRES_PASSWORD, NODE_ENV } = process.env;
-
-if (!POSTGRES_USER || !POSTGRES_PASSWORD) {
-  throw new Error('Can`t get access to db user and db pass');
-}
-export const sequelize = new Sequelize(
-  'notes_db',
-  POSTGRES_USER,
-  POSTGRES_PASSWORD,
-  {
-    dialect: 'postgres',
-    host: NODE_ENV === 'development' ? 'localhost' : 'db'
-  }
-);
 
 class Note extends Model<InferAttributes<Note>, InferCreationAttributes<Note>> {
   declare id: CreationOptional<string>;
