@@ -65,6 +65,15 @@ class Controller {
       next(error);
     }
   }
+
+  async getStatistics(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = await notesServices.getStatistics();
+      res.json(data);
+    } catch (error: any) {
+      next(error);
+    }
+  }
 }
 
 const notesController = new Controller();

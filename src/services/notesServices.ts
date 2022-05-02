@@ -58,6 +58,8 @@ class NotesServices {
     );
     return updatedNote;
   }
+
+  async getStatistics() {}
 }
 
 const notesServices = new NotesServices();
